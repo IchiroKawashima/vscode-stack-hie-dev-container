@@ -1,7 +1,7 @@
 FROM debian:buster-slim
 
 ARG STACK_VERSION=2.1.3
-ARG GHC_VERSION=8.6.5
+ARG HIE_VERSION=8.6.5
 
 ARG USERNAME=vscode
 ARG USER_UID=1000
@@ -30,7 +30,7 @@ RUN apt-get update \
     # For stack
     && apt-get -y install --no-install-recommends netbase build-essential \
     # For hie
-    && apt-get -y install --no-install-recommends libicu-dev libncurses-dev libgmp-dev \
+    && apt-get -y install --no-install-recommends libicu-dev libncurses-dev libgmp-dev zlib1g-dev \
     #
     # Clean up
     && apt-get autoremove -y \
@@ -40,23 +40,23 @@ RUN apt-get update \
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=dialog
 
-# stack
+# install stack
 RUN wget "https://github.com/commercialhaskell/stack/releases/download/v${STACK_VERSION}/stack-${STACK_VERSION}-linux-x86_64.tar.gz" \
     && tar xf "stack-${STACK_VERSION}-linux-x86_64.tar.gz" \
     && rm "stack-${STACK_VERSION}-linux-x86_64.tar.gz" \
     && mv "stack-${STACK_VERSION}-linux-x86_64/stack" "/usr/local/bin" \
     && rm -rf "stack-${STACK_VERSION}-linux-x86_64" \
-    && stack --resolver=ghc-${GHC_VERSION} setup
+    && stack --resolver=ghc-${HIE_VERSION} setup
 
-# hie
+# install hie
 RUN git clone https://github.com/haskell/haskell-ide-engine --recurse-submodules \
     && cd haskell-ide-engine \
-    && stack ./install.hs hie-${GHC_VERSION} \
-    && mv "/root/.local/bin/*" "/usr/local/bin" \
-    && stack ./install.hs data \
-    && mv "/root/.hoogle" "/usr/local/share/hoogle" \
-    && ln -s "/usr/local/share/hoogle" "/root/.hoogle" \
-    && ln -s "/usr/local/share/hoogle" "/home/${USERNAME}/.hoogle" \
+    && stack ./install.hs hie-${HIE_VERSION} && mv /root/.local/bin/* /usr/local/bin \
+    && stack ./install.hs data && mv /root/.hoogle /usr/local/share/hoogle \
+    && ln -s /usr/local/share/hoogle /root/.hoogle && ln -s /usr/local/share/hoogle /home/${USERNAME}/.hoogle \
     && rm -rf haskell-ide-engine
 
-RUN stack --local-bin-path="/usr/local/bin" install hspec-discover
+RUN stack --resolver=ghc-${HIE_VERSION} --local-bin-path="/usr/local/bin" install hspec-discover
+
+# clean up
+RUN rm -rf /root/.stack
