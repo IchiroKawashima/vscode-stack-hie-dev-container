@@ -7,22 +7,16 @@ on:
     branches: [ master ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
-      
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag vscode-stack-hie-dev-container:$(date +%s)
-      
+      run: docker build . --file Dockerfile --tag dev-container
     - name: Save the Docker image
-      run: docker save vscode-stack-hie-dev-container:$(date +%s) | gzip -c > vscode-stack-hie-dev-container.tar.gz
-      
+      run: docker export dev-container > artifacts
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
       with:
-        name: vscode-stack-hie-dev-container.tar.gz
-        path: ./
+        name: vscode-stack-hie-dev-container-${{github.sha}}
+        path: artifacts
