@@ -1,0 +1,28 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag vscode-stack-hie-dev-container:$(date +%s)
+      
+    - name: Save the Docker image
+      run: docker save vscode-stack-hie-dev-container:$(date +%s) | gzip -c > vscode-stack-hie-dev-container.tar.gz
+      
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: vscode-stack-hie-dev-container.tar.gz
+        path: ./
