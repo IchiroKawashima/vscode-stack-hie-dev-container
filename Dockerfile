@@ -54,7 +54,7 @@ RUN git clone https://github.com/haskell/haskell-ide-engine --recurse-submodules
     && stack ./install.hs hie-${HIE_VERSION} && mv /root/.local/bin/* /usr/local/bin \
     && stack ./install.hs data && mv /root/.hoogle /usr/local/share/hoogle \
     && ln -s /usr/local/share/hoogle /root/.hoogle && ln -s /usr/local/share/hoogle /home/${USERNAME}/.hoogle \
-    && rm -rf haskell-ide-engine
+    && cd ../ && rm -rf haskell-ide-engine
 
 RUN stack --resolver=ghc-${HIE_VERSION} --local-bin-path="/usr/local/bin" install hspec-discover
 
