@@ -11,12 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag dev-container
-    - name: Save the Docker image
-      run: docker save dev-container > artifacts
-    - name: Upload artifact
-      uses: actions/upload-artifact@v1.0.0
+    - name: Build, Tag and Push
+      uses: mattdavis0351/actions/docker-gpr@v1
       with:
-        name: vscode-stack-hie-dev-container-${{github.sha}}
-        path: artifacts
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        image-name: vscode-stack-hie-dev-container
+        dockerfile-location: ./
