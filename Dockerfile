@@ -8,7 +8,7 @@ ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
 # Set to false to skip installing zsh and Oh My ZSH!
-ARG INSTALL_ZSH="true"
+ARG INSTALL_ZSH="false"
 
 # Location and expected SHA for common setup script - SHA generated on release
 ARG COMMON_SCRIPT_SOURCE="https://raw.githubusercontent.com/microsoft/vscode-dev-containers/master/script-library/common-debian.sh"
@@ -40,23 +40,25 @@ RUN apt-get update \
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=dialog
 
-# install stack
+# Install stack
 RUN wget "https://github.com/commercialhaskell/stack/releases/download/v${STACK_VERSION}/stack-${STACK_VERSION}-linux-x86_64.tar.gz" \
     && tar xf "stack-${STACK_VERSION}-linux-x86_64.tar.gz" \
     && rm "stack-${STACK_VERSION}-linux-x86_64.tar.gz" \
     && mv "stack-${STACK_VERSION}-linux-x86_64/stack" "/usr/local/bin" \
-    && rm -rf "stack-${STACK_VERSION}-linux-x86_64" \
-    && stack --resolver=ghc-${HIE_VERSION} setup
+    && rm -rf "stack-${STACK_VERSION}-linux-x86_64"
 
-# install hie
+# Install hie & hspec-discover
 RUN git clone https://github.com/haskell/haskell-ide-engine --recurse-submodules \
     && cd haskell-ide-engine \
+    #
+    # Install hie
     && stack ./install.hs hie-${HIE_VERSION} && mv /root/.local/bin/* /usr/local/bin \
     && stack ./install.hs data && mv /root/.hoogle /usr/local/share/hoogle \
     && ln -s /usr/local/share/hoogle /root/.hoogle && ln -s /usr/local/share/hoogle /home/${USERNAME}/.hoogle \
-    && cd ../ && rm -rf haskell-ide-engine
-
-RUN stack --resolver=ghc-${HIE_VERSION} --local-bin-path="/usr/local/bin" install hspec-discover
-
-# clean up
-RUN rm -rf /root/.stack
+    && cd ../ && rm -rf haskell-ide-engine \
+    #
+    # Install hspec-discover
+    && stack --resolver=ghc-${HIE_VERSION} --local-bin-path="/usr/local/bin" install hspec-discover \
+    #
+    # Clean up
+    && rm -rf /root/.stack
