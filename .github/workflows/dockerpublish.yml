@@ -17,7 +17,7 @@ jobs:
 
     strategy:
       matrix:
-        ghc-version: ["8.6.4", "8.6.5", "8.8.2", "8.8.3", "8.10.1"]
+        ghc-version: ["8.6.4", "8.6.5", "8.8.2", "8.8.3"]
 
     steps:
       - uses: actions/checkout@v2
@@ -33,7 +33,7 @@ jobs:
 
     strategy:
       matrix:
-        ghc-version: ["8.6.4", "8.6.5", "8.8.2", "8.8.3", "8.10.1"]
+        ghc-version: ["8.6.4", "8.6.5", "8.8.2", "8.8.3"]
 
     steps:
       - uses: actions/checkout@v2
