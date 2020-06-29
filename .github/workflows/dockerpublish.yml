@@ -2,41 +2,30 @@ name: Docker
 
 on:
   push:
-    # Publish `master` as Docker `latest` image.
     branches:
       - master
 
-    # Publish `v1.2.3` tags as releases.
     tags:
       - v*
 
-  # Run tests for any PRs.
-  pull_request:
-
 env:
-  # TODO: Change variable to your image's name.
-  IMAGE_NAME: stack-hie
+  IMAGE_NAME: stack-hls
 
 jobs:
-  # Run tests.
-  # See also https://docs.docker.com/docker-hub/builds/automated-testing/
   test:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        hie-version: ["8.6.4", "8.6.5", "8.8.2", "8.8.3"]
+        ghc-version: ["8.6.4", "8.6.5", "8.8.2", "8.8.3", "8.10.1"]
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Run tests
-        run: docker build . --file Dockerfile --build-arg HIE_VERSION=${{ matrix.hie-version }}
+        run: docker build . --file Dockerfile --build-arg GHC_VERSION=${{ matrix.ghc-version }}
 
-  # Push image to GitHub Packages.
-  # See also https://docs.docker.com/docker-hub/builds/
   push:
-    # Ensure test job passes before pushing image.
     needs: test
 
     runs-on: ubuntu-latest
@@ -44,20 +33,20 @@ jobs:
 
     strategy:
       matrix:
-        hie-version: ["8.6.4", "8.6.5", "8.8.2", "8.8.3"]
+        ghc-version: ["8.6.4", "8.6.5", "8.8.2", "8.8.3", "8.10.1"]
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Build image
-        run: docker build . --file Dockerfile --build-arg HIE_VERSION=${{ matrix.hie-version }} --tag image
+        run: docker build . --file Dockerfile --build-arg GHC_VERSION=${{ matrix.ghc-version }} --tag image
 
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
       - name: Push image
         run: |
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME-${{ matrix.hie-version }}
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME-${{ matrix.ghc-version }}
 
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
