@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
    #
    # hls dependencies
-   && apt-get -y install --no-install-recommends xz-utils make libicu-dev libncurses-dev libgmp-dev zlib1g-dev \
+   && apt-get -y install --no-install-recommends build-essential libicu-dev libncurses-dev libgmp-dev zlib1g-dev \
    # cleaning up
    && apt-get autoremove -y \
    && apt-get clean -y \
