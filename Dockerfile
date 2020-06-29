@@ -24,8 +24,8 @@ RUN git clone https://github.com/haskell/haskell-language-server --recurse-submo
     #
     # hls
     && stack ./install.hs hls-${GHC_VERSION} && mv /root/.local/bin/* /usr/local/bin \
-    && stack ./install.hs data && mv /root/.hoogle /usr/local/share/hoogle \
-    && ln -s /usr/local/share/hoogle /root/.hoogle && ln -s /usr/local/share/hoogle /home/${USERNAME}/.hoogle \
+    # && stack ./install.hs data && mv /root/.hoogle /usr/local/share/hoogle \
+    # && ln -s /usr/local/share/hoogle /root/.hoogle && ln -s /usr/local/share/hoogle /home/${USERNAME}/.hoogle \
     && cd ../ && rm -rf haskell-language-server \
     #
     # hspec-discover
