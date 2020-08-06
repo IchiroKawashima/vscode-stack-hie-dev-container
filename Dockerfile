@@ -16,7 +16,7 @@ ENV DEBIAN_FRONTEND=dialog
 # installing stack
 RUN wget https://get.haskellstack.org/stable/linux-x86_64.tar.gz \
     && tar xf linux-x86_64.tar.gz \
-    && mv stack-2.3.1-linux-x86_64/stack /usr/local/bin
+    && mv stack-*-linux-x86_64/stack /usr/local/bin
 
 # Installing hls & hspec-discover
 RUN git clone https://github.com/haskell/haskell-language-server --recurse-submodules \
